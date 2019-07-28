@@ -1,0 +1,5 @@
+/Users/lanshifu/Documents/android_work_space/xposed/FFmpegDemo/app/src/main/cpp/cmake_test1/CMakeFiles/libavcodec.dir
+/Users/lanshifu/Documents/android_work_space/xposed/FFmpegDemo/app/src/main/cpp/cmake_test1/CMakeFiles/hello_lib.dir
+/Users/lanshifu/Documents/android_work_space/xposed/FFmpegDemo/app/src/main/cpp/cmake_test1/CMakeFiles/rebuild_cache.dir
+/Users/lanshifu/Documents/android_work_space/xposed/FFmpegDemo/app/src/main/cpp/cmake_test1/CMakeFiles/edit_cache.dir
+/Users/lanshifu/Documents/android_work_space/xposed/FFmpegDemo/app/src/main/cpp/cmake_test1/CMakeFiles/out_hello.dir

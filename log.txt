@@ -1,0 +1,22 @@
+07-02 19:37:07.435 7977-7977/? E/Xposed: File does not exist APK:/data/app/com.xposed.market-1/base.apk
+07-02 19:37:07.476 8016-8016/? A/AEE/DEBUG: *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+07-02 19:37:07.476 8016-8016/? A/AEE/DEBUG: Build fingerprint: 'LeEco/Le2_CN1/le_x6:6.0/HEXCNFN5801809301S/1475237781:user/release-keys'
+07-02 19:37:07.476 8016-8016/? A/AEE/DEBUG: Revision: '0'
+07-02 19:37:07.476 8016-8016/? A/AEE/DEBUG: ABI: 'arm'
+07-02 19:37:07.476 8016-8016/? A/AEE/DEBUG: pid: 7753, tid: 8010, name: hifu.ffmpegdemo  >>> com.lanshifu.ffmpegdemo <<<
+07-02 19:37:07.477 8016-8016/? A/AEE/DEBUG: signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x2
+07-02 19:37:07.496 8016-8016/? A/AEE/DEBUG:     r0 00000000  r1 00000001  r2 d497f9a0  r3 d497f930
+07-02 19:37:07.496 8016-8016/? A/AEE/DEBUG:     r4 f4bff840  r5 f7121ec0  r6 f4be4630  r7 f4bfc928
+07-02 19:37:07.496 8016-8016/? A/AEE/DEBUG:     r8 f4bb3160  r9 00001200  sl d497f4bc  fp f4be3ae0
+07-02 19:37:07.496 8016-8016/? A/AEE/DEBUG:     ip d497fa00  sp d497f1b0  lr f49ef937  pc f49ef936  cpsr 40070030
+07-02 19:37:07.503 8016-8016/? A/AEE/DEBUG: backtrace:
+07-02 19:37:07.503 8016-8016/? A/AEE/DEBUG:     #00 pc 0025a936  /system/lib/libart.so (_ZN3art9JavaVMExt8JniAbortEPKcS2_+73)
+07-02 19:37:07.503 8016-8016/? A/AEE/DEBUG:     #01 pc 0025b2a9  /system/lib/libart.so (_ZN3art9JavaVMExt9JniAbortVEPKcS2_St9__va_list+64)
+07-02 19:37:07.504 8016-8016/? A/AEE/DEBUG:     #02 pc 000fdf29  /system/lib/libart.so (_ZN3art11ScopedCheck6AbortFEPKcz+32)
+07-02 19:37:07.504 8016-8016/? A/AEE/DEBUG:     #03 pc 001020b5  /system/lib/libart.so (_ZN3art11ScopedCheck5CheckERNS_18ScopedObjectAccessEbPKcPNS_12JniValueTypeE.constprop.95+1096)
+07-02 19:37:07.504 8016-8016/? A/AEE/DEBUG:     #04 pc 0010d19d  /system/lib/libart.so (_ZN3art8CheckJNI17NewPrimitiveArrayEPKcP7_JNIEnviNS_9Primitive4TypeE+388)
+07-02 19:37:07.504 8016-8016/? A/AEE/DEBUG:     #05 pc 000048e5  /data/app/com.lanshifu.ffmpegdemo-1/lib/arm/libmusic-player.so (_ZN7_JNIEnv12NewByteArrayEi+38)
+07-02 19:37:07.504 8016-8016/? A/AEE/DEBUG:     #06 pc 0000468f  /data/app/com.lanshifu.ffmpegdemo-1/lib/arm/libmusic-player.so (_ZN6FFmpeg7prepareEv+1334)
+07-02 19:37:07.504 8016-8016/? A/AEE/DEBUG:     #07 pc 0000414f  /data/app/com.lanshifu.ffmpegdemo-1/lib/arm/libmusic-player.so (_Z10threadPlayPv+18)
+07-02 19:37:07.504 8016-8016/? A/AEE/DEBUG:     #08 pc 000407b3  /system/lib/libc.so (_ZL15__pthread_startPv+30)
+07-02 19:37:07.504 8016-8016/? A/AEE/DEBUG:     #09 pc 0001a041  /system/lib/libc.so (__start_thread+6)
