@@ -49,7 +49,7 @@ public class AudioEncoderThread extends Thread {
                 int outputBufferIndex = mAudioCodec.dequeueOutputBuffer(mBufferInfo, 0);
                 if (outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                     mAudioTrackIndex = mMediaMuxer.addTrack(mAudioCodec.getOutputFormat());
-                    Log.d("lxb", "run: AudioEncoderThread await");
+                    Log.d("lxb", "run: AudioEncoderThread await mAudioTrackIndex = " + mAudioTrackIndex);
                     mStartCb.await();
                     // mMediaMuxer.start();
                 } else {
@@ -59,18 +59,15 @@ public class AudioEncoderThread extends Thread {
                         outBuffer.position(mBufferInfo.offset);
                         outBuffer.limit(mBufferInfo.offset + mBufferInfo.size);
 
-                        // 修改 pts
                         if (mAudioPts == 0) {
                             mAudioPts = mBufferInfo.presentationTimeUs;
                         }
-                        mBufferInfo.presentationTimeUs -= mAudioPts;
-
-                        // 写入数据
+                        mBufferInfo.presentationTimeUs = mBufferInfo.presentationTimeUs - mAudioPts;
                         mMediaMuxer.writeSampleData(mAudioTrackIndex, outBuffer, mBufferInfo);
-                        Log.d("lxb", "run: 音频写入混合器");
 
                         mAudioCodec.releaseOutputBuffer(outputBufferIndex, false);
                         outputBufferIndex = mAudioCodec.dequeueOutputBuffer(mBufferInfo, 0);
+
                     }
                 }
             }

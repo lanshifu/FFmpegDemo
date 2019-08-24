@@ -2,6 +2,7 @@ package com.lanshifu.ffmpegdemo.record.thread;
 
 import android.media.MediaCodec;
 import android.media.MediaMuxer;
+import android.util.Log;
 
 
 import com.lanshifu.ffmpegdemo.record.BaseVideoRecorder;
@@ -49,6 +50,7 @@ public class VideoEncoderThread extends Thread {
                 int outputBufferIndex = mVideoCodec.dequeueOutputBuffer(mBufferInfo, 0);
                 if (outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                     mVideoTrackIndex = mMediaMuxer.addTrack(mVideoCodec.getOutputFormat());
+                    Log.d("lxb", "run: mVideoTrackIndex = "+mVideoTrackIndex);
                     mMediaMuxer.start();
                     mStartCb.await();
                 } else {

@@ -5,6 +5,12 @@
     android:padding="16dp">
 
     <Button
+        android:id="@+id/btn_auio_record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="录音"/>
+
+    <Button
         android:id="@+id/btn_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,5 +21,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="播放器"/>
+
+    <Button
+        android:id="@+id/btn_avcodec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="采集音视频"/>
+
+    <Button
+        android:id="@+id/btn_mp4_push"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="视频推流"/>
 
 </LinearLayout>
