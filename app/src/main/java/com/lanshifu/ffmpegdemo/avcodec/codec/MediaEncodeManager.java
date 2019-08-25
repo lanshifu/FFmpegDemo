@@ -14,6 +14,7 @@ import com.lanshifu.ffmpegdemo.avcodec.codec.thread.AudioCodecThread;
 import com.lanshifu.ffmpegdemo.avcodec.codec.thread.EglRenderThread;
 import com.lanshifu.ffmpegdemo.avcodec.codec.thread.VideoCodecThread;
 import com.lanshifu.ffmpegdemo.avcodec.surface.EglSurfaceView;
+import com.lanshifu.ffmpegdemo.push_live.LivePushHandle;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -23,7 +24,7 @@ import java.nio.ByteBuffer;
  * 编解码管理类
  */
 public class MediaEncodeManager {
-    private static final String TAG = "MediaEncodeManager";
+    private static final String TAG = "lxb-MediaEncodeManager";
 
     //开始合成
     public static final int MUXER_START = 1;
@@ -70,6 +71,8 @@ public class MediaEncodeManager {
     public boolean mVideoStop;
 
     private MediaMuxerChangeListener mMediaMuxerChangeListener;
+
+    public LivePushHandle mLivePush = new LivePushHandle();
 
     public MediaEncodeManager(EglSurfaceView.Render eglSurfaceRender) {
         this.mEglSurfaceRender = eglSurfaceRender;
@@ -125,13 +128,13 @@ public class MediaEncodeManager {
             mVideoCodec = MediaCodec.createEncoderByType(videoType);
             MediaFormat videoFormat = MediaFormat.createVideoFormat(videoType, width, height);
 
-            videoFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT,
-                    MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+            // 设置颜色格式
+            videoFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
             //MediaFormat.KEY_FRAME_RATE -- 可通过Camera#Parameters#getSupportedPreviewFpsRange获取
-            videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
+            videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 24);
             //mSurfaceWidth*mSurfaceHeight*N  N标识码率低、中、高，类似可设置成1，3，5，码率越高视频越大，也越清晰
             videoFormat.setInteger(MediaFormat.KEY_BIT_RATE, width * height * 4);
-            //每秒关键帧数
+            // 设置 I 帧的间隔时间
             videoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -139,6 +142,7 @@ public class MediaEncodeManager {
                 videoFormat.setInteger(MediaFormat.KEY_LEVEL, MediaCodecInfo.CodecProfileLevel.AVCLevel31);
             }
 
+            // 创建编码器
             mVideoCodec.configure(videoFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             //注意这里，获取视频解码器的surface，之后要将opengl输出到这个surface中
             mSurface = mVideoCodec.createInputSurface();
@@ -254,6 +258,7 @@ public class MediaEncodeManager {
         }
         mVideoStop = true;
         stopMediaMuxer();
+        stopPush();
     }
 
     private void stopMediaMuxer() {
@@ -272,5 +277,30 @@ public class MediaEncodeManager {
         if (mMediaMuxerChangeListener != null){
             mMediaMuxerChangeListener.onMediaInfoListener(time);
         }
+    }
+
+    public void startPush(){
+        mLivePush.setOnConnectListener(new LivePushHandle.ConnectListener() {
+            @Override
+            public void connectError(int errorCode, String errorMsg) {
+                Log.d(TAG, "connectError: ");
+            }
+
+            @Override
+            public void connectSuccess() {
+                Log.d(TAG, "connectSuccess: ");
+                startEncode();
+            }
+
+            @Override
+            public void onInfo(long pts, long dts, long duration, long index) {
+
+            }
+        });
+        mLivePush.initConnect();
+    }
+
+    public void stopPush(){
+        mLivePush.stop();
     }
 }

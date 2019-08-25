@@ -64,7 +64,8 @@ public class AvCodecActivity extends AppCompatActivity implements View.OnClickLi
                     mBtnRecord.setText("停止");
 
                     initMediaCodec();
-                    mediaEncodeManager.startEncode();
+//                    mediaEncodeManager.startEncode();
+                    mediaEncodeManager. startPush();
                     mAudioManager.start();
 
                 }else {
@@ -83,7 +84,7 @@ public class AvCodecActivity extends AppCompatActivity implements View.OnClickLi
         Log.d(TAG, "mp4路径 = " + filePath);
         int mediaFormat = MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4;
         String audioType = MediaFormat.MIMETYPE_AUDIO_AAC;
-        String videoType = MediaFormat.MIMETYPE_VIDEO_AVC;
+        String videoType = MediaFormat.MIMETYPE_VIDEO_AVC; //H.264的mime类型
 //        String videoType = "video/avc";
         int sampleRate = 44100;
         int channels = 2;//单声道 channelCount=1 , 双声道  channelCount=2

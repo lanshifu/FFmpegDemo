@@ -37,7 +37,8 @@ void PacketQueue::push(AVPacket *pPacket){
 AVPacket *PacketQueue::pop(){
     AVPacket *pPacket;
     pthread_mutex_lock(&packetMutex);
-    while (pPacketQueue->empty()) {
+    //队列空就线程等待，然后有数据添加到队列的时候唤醒线程，生产者消费者模式
+    if (pPacketQueue->empty()) {
         pthread_cond_wait(&packetCond, &packetMutex);
     }
     pPacket = pPacketQueue->front();

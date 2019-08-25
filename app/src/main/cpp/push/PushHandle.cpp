@@ -17,7 +17,7 @@ using namespace std;
 
 
 //JNI回调处理
-PushJniCall *pushJniCall;
+PushJniCall *pJniCall;
 //状态处理
 PushStatus *pushStatus;
 
@@ -28,8 +28,8 @@ int avError(int errNum) {
     av_strerror(errNum, buf, sizeof(buf));
 
     LOGE("发生异常：%s",buf);
-    if (pushJniCall != NULL) {
-        pushJniCall->callOnError(errNum, buf);
+    if (pJniCall != NULL) {
+        pJniCall->callOnError(errNum, buf);
     }
     return errNum;
 }
@@ -40,7 +40,7 @@ JNIEXPORT jint JNICALL
 Java_com_lanshifu_ffmpegdemo_push_PushHandle_nPushRtmpFile(JNIEnv *env, jobject instance,
                                                            jstring path_, jstring rtmp_url) {
 
-    pushJniCall = new PushJniCall(env, instance);
+    pJniCall = new PushJniCall(env, instance);
     pushStatus = new PushStatus();
 
     const char *inUrl = env->GetStringUTFChars(path_, 0);
@@ -224,8 +224,8 @@ Java_com_lanshifu_ffmpegdemo_push_PushHandle_nPushRtmpFile(JNIEnv *env, jobject 
                 frame_index++;
             }
             //回调数据
-            if (pushJniCall != NULL) {
-                pushJniCall->callOnInfo(pkt.pts, pkt.dts, pkt.duration, frame_index);
+            if (pJniCall != NULL) {
+                pJniCall->callOnInfo(pkt.pts, pkt.dts, pkt.duration, frame_index);
             }
 
             ///把一帧数据写到输出流（推流）
@@ -239,13 +239,13 @@ Java_com_lanshifu_ffmpegdemo_push_PushHandle_nPushRtmpFile(JNIEnv *env, jobject 
         }
         ret = 0;
     } catch (int errNum) {
-        if (pushJniCall != NULL) {
-            pushJniCall->callOnError(errNum, const_cast<char *>("出错了"));
+        if (pJniCall != NULL) {
+            pJniCall->callOnError(errNum, const_cast<char *>("出错了"));
         }
     }
 
-    if (pushJniCall != NULL) {
-        pushJniCall->callOnPushComplete();
+    if (pJniCall != NULL) {
+        pJniCall->callOnPushComplete();
     }
 
     LOGD("推流结束》》》");

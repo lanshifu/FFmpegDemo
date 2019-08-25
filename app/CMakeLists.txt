@@ -1,7 +1,8 @@
 # cmake参考 https://www.jianshu.com/p/528eeb266f83
 
 cmake_minimum_required(VERSION 3.4.1)
-
+# 添加 define  -DNO_CRYPTO，不然rtmp里面会报错找不到 openssl
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNO_CRYPTO")
 
 # 需要引入我们头文件,以这个配置的目录为基准
 include_directories(src/main/jniLibs/include)
@@ -15,8 +16,9 @@ AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/src/main/cpp/audio AUDIO_SRC_LIST)
 AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/src/main/cpp/video VIDEO_SRC_LIST)
 
 AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/src/main/cpp/push PUSH_SRC_LIST)
-AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/src/main/cpp/push/librtmp RTMP_SRC_LIST)
 
+AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/src/main/cpp/push_rtmp PUSH_RTMP_SRC_LIST)
+AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/src/main/cpp/push_rtmp/librtmp RTMP_LIB_LIST)
 
 #file(GLOB VIDEO_SRC_LIST "${CMAKE_SOURCE_DIR}/src/main/cpp/video/video-player.cpp")
 
@@ -46,6 +48,15 @@ add_library(
         SHARED
         # Provides a relative path to your source file(s).
         ${PUSH_SRC_LIST}
+)
+add_library(
+        # 编译生成的库的名称叫 push_handle，对应System.loadLibrary("push_handle");
+        push_rtmp_handle
+        # Sets the library as a shared library.
+        SHARED
+        # Provides a relative path to your source file(s).
+        ${PUSH_RTMP_SRC_LIST}
+        ${RTMP_LIB_LIST}
 )
 
 
@@ -101,6 +112,33 @@ target_link_libraries(
 
 target_link_libraries(
         push_handle
+        # 编解码(最重要的库)
+        avcodec-57
+        # 设备信息
+        avdevice-57
+        # 滤镜特效处理库
+        avfilter-6
+        # 封装格式处理库
+        avformat-57
+        # 工具库(大部分库都需要这个库的支持)
+        avutil-55
+        # 后期处理
+        postproc-54
+        # 音频采样数据格式转换库
+        swresample-2
+        # 视频像素数据格式转换
+        swscale-4
+        # 链接 android ndk 自带的一些库
+        android
+        # Links the target library to the log library
+        # included in the NDK.
+        # 链接 OpenSLES
+        OpenSLES
+        log)
+
+
+target_link_libraries(
+        push_rtmp_handle
         # 编解码(最重要的库)
         avcodec-57
         # 设备信息

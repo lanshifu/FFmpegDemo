@@ -30,6 +30,7 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".avcodec.AvCodecActivity" />
         <activity android:name=".push.PushActivity" />
+        <activity android:name=".push_live.LivePushActivity" />
     </application>
 
 </manifest>

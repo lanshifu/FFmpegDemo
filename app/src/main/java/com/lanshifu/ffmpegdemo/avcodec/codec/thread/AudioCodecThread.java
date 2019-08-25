@@ -78,6 +78,11 @@ public class AudioCodecThread extends Thread {
                     bufferInfo.presentationTimeUs = bufferInfo.presentationTimeUs - mPresentationTimeUs;
                     mediaMuxer.writeSampleData(mAudioTrackIndex, outputBuffer, bufferInfo);
 
+                    byte[] data = new byte[outputBuffer.remaining()];
+                    outputBuffer.get(data, 0, data.length);
+                    mMediaEncodeManager.mLivePush.pushAudio(data,data.length);
+
+
                     audioCodec.releaseOutputBuffer(outputBufferIndex, false);
                     outputBufferIndex = audioCodec.dequeueOutputBuffer(bufferInfo, 0);
                 }

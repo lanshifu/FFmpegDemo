@@ -16,7 +16,7 @@ import java.nio.ByteBuffer;
  * 视频写入thread
  */
 public class VideoCodecThread extends Thread {
-    private static final String TAG = "VideoCodecThread";
+    private static final String TAG = "lxb-VideoCodecThread";
     private MediaEncodeManager mMediaEncodeManager;
     private MediaCodec videoCodec;
     private MediaCodec.BufferInfo bufferInfo;
@@ -25,6 +25,9 @@ public class VideoCodecThread extends Thread {
 
     private boolean mIsStop;
     private long mPresentationTimeUs;
+
+    //推流相关
+    public byte[] mVideoSps, mVideoPps;
 
 
     public VideoCodecThread(WeakReference<MediaEncodeManager> mediaEncodeManagerWeakReference) {
@@ -57,6 +60,15 @@ public class VideoCodecThread extends Thread {
                 Log.d(TAG, "添加视频轨道，mVideoTrackIndex = " + mVideoTrackIndex);
                 mMediaEncodeManager.mVideoTrackReady = true;
                 mMediaEncodeManager.startMediaMuxer();
+
+                // 推流要获取 sps 和 pps。 ”csd-0” （sps） ，”csd-1”（pps）
+                ByteBuffer byteBuffer = videoCodec.getOutputFormat().getByteBuffer("csd-0");
+                mVideoSps = new byte[byteBuffer.remaining()];
+                byteBuffer.get(mVideoSps, 0, mVideoSps.length);
+                byteBuffer = videoCodec.getOutputFormat().getByteBuffer("csd-1");
+                mVideoPps = new byte[byteBuffer.remaining()];
+                byteBuffer.get(mVideoPps, 0, mVideoPps.length);
+                Log.d(TAG, " 成功获取sps和pps ");
             } else {
                 while (outputBufferIndex >= 0) {
                     if (!mMediaEncodeManager.mEncodeStart) {
@@ -74,6 +86,21 @@ public class VideoCodecThread extends Thread {
                     }
                     bufferInfo.presentationTimeUs = bufferInfo.presentationTimeUs - mPresentationTimeUs;
                     mediaMuxer.writeSampleData(mVideoTrackIndex, outputBuffer, bufferInfo);
+
+                    //1、 在关键帧前先把 sps 和 pps 推到流媒体服务器
+                    if (bufferInfo.flags == MediaCodec.BUFFER_FLAG_KEY_FRAME) {
+                        mMediaEncodeManager.mLivePush.pushSpsPps(mVideoSps,
+                                mVideoSps.length, mVideoPps, mVideoPps.length);
+                        Log.d(TAG, "推送关键帧sps和pps");
+                    }
+
+                    //2、推送每一帧
+                    byte[] data = new byte[outputBuffer.remaining()];
+                    outputBuffer.get(data, 0, data.length);
+                    mMediaEncodeManager.mLivePush.pushVideo(data, data.length,
+                            bufferInfo.flags == MediaCodec.BUFFER_FLAG_KEY_FRAME);
+
+
                     if (bufferInfo != null) {
                         mMediaEncodeManager.onRecordTimeCallBack((int) (bufferInfo.presentationTimeUs / 1000000));
                     }

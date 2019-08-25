@@ -9,6 +9,7 @@ import android.view.View;
 import com.lanshifu.ffmpegdemo.audio.AudioRecordActivity;
 import com.lanshifu.ffmpegdemo.avcodec.AvCodecActivity;
 import com.lanshifu.ffmpegdemo.push.PushActivity;
+import com.lanshifu.ffmpegdemo.push_live.LivePushActivity;
 
 public class SelectActivity extends AppCompatActivity implements View.OnClickListener {
     @Override
@@ -21,6 +22,7 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
         findViewById(R.id.btn_player).setOnClickListener(this);
         findViewById(R.id.btn_avcodec).setOnClickListener(this);
         findViewById(R.id.btn_mp4_push).setOnClickListener(this);
+        findViewById(R.id.live_push).setOnClickListener(this);
     }
 
     @Override
@@ -44,6 +46,11 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.btn_mp4_push:
                 startActivity(new Intent(SelectActivity.this, PushActivity.class));
+                break;
+
+
+            case R.id.live_push:
+                startActivity(new Intent(SelectActivity.this, LivePushActivity.class));
                 break;
 
 
