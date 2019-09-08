@@ -8,7 +8,7 @@ import android.view.View;
 
 import com.lanshifu.ffmpegdemo.audio.AudioRecordActivity;
 import com.lanshifu.ffmpegdemo.avcodec.AvCodecActivity;
-import com.lanshifu.ffmpegdemo.push.PushActivity;
+import com.lanshifu.ffmpegdemo.push.FilePushActivity;
 import com.lanshifu.ffmpegdemo.push_live.LivePushActivity;
 
 public class SelectActivity extends AppCompatActivity implements View.OnClickListener {
@@ -45,7 +45,7 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                 break;
 
             case R.id.btn_mp4_push:
-                startActivity(new Intent(SelectActivity.this, PushActivity.class));
+                startActivity(new Intent(SelectActivity.this, FilePushActivity.class));
                 break;
 
 

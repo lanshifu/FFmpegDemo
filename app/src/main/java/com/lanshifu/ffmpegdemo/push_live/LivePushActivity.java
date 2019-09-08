@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.lanshifu.ffmpegdemo.R;
 import com.lanshifu.ffmpegdemo.camera.widget.CameraFocusView;
 import com.lanshifu.ffmpegdemo.camera.widget.CameraView;
+import com.lanshifu.ffmpegdemo.utils.ShaderManager;
 
 public class LivePushActivity extends AppCompatActivity {
 
@@ -82,5 +85,41 @@ public class LivePushActivity extends AppCompatActivity {
             mVideoPush.stopPush();
         }
         super.onDestroy();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_preview, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.mDefault:
+                mCameraView.setFilter(ShaderManager.CAMERA_BASE_SHADER);
+                break;
+            case R.id.mGray:
+                mCameraView.setFilter(ShaderManager.CAMERA_GRAY_SHADER);
+                break;
+            case R.id.mCool:
+                mCameraView.setFilter(ShaderManager.CAMERA_COOL_SHADER);
+                break;
+            case R.id.mWarm:
+                mCameraView.setFilter(ShaderManager.CAMERA_WARM_SHADER);
+                break;
+            case R.id.mBlur:
+                mCameraView.setFilter(ShaderManager.CAMERA_BUZZ_BEAUTY);
+                break;
+            case R.id.mFour:
+                mCameraView.setFilter(ShaderManager.CAMERA_FOUR_SHADER);
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+
     }
 }

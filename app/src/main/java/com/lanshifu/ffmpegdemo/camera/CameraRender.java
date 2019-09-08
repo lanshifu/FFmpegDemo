@@ -5,12 +5,14 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.util.Log;
 
 
 import com.lanshifu.ffmpegdemo.R;
 import com.lanshifu.ffmpegdemo.opengl.BaseRender;
 import com.lanshifu.ffmpegdemo.opengl.FboRender;
 import com.lanshifu.ffmpegdemo.opengl.Utils;
+import com.lanshifu.ffmpegdemo.utils.ShaderManager;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -19,7 +21,9 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public final class CameraRender extends BaseRender {
+
+public class CameraRender extends BaseRender {
+    private static final String TAG = "CameraRender";
     private Context mContext;
     private FboRender mFboRender;
 
@@ -27,10 +31,15 @@ public final class CameraRender extends BaseRender {
      * 顶点坐标
      */
     private float[] mVertexCoordinate = new float[]{
-            -1f, -1f,
-            1f, -1f,
-            -1f, 1f,
-            1f, 1f
+            -1f, -1f, //坐下
+            1f, -1f, //右下
+            -1f, 1f, //左上
+            1f, 1f //右上
+
+//            -1, 1, 0, //左上
+//            -1, -1, 0, //左下
+//            1, 1, 0, //右上
+//            1, -1, 0, //右下
     };
     private FloatBuffer mVertexBuffer;
 
@@ -42,14 +51,27 @@ public final class CameraRender extends BaseRender {
             1f, 1f,
             0f, 0f,
             1f, 0f
+//            0, 0,
+//            0, 1,
+//            1, 0,
+//            1, 1,
     };
     private FloatBuffer mFragmentBuffer;
-    private int mProgram;
-    private int vPosition;
-    private int fPosition;
+
+//    private int vPosition;
+//    private int fPosition;
+
+    //当前绘制的顶点位置句柄
+    protected int vPositionHandle;
+    //这个可以理解为一个OpenGL程序句柄
+    protected int mProgram;
+    private int uMatrix;
+    //纹理坐标句柄
+    protected int mTexCoordHandle;
+
+
     private int mVboId;
     private SurfaceTexture mCameraSt;
-    private int uMatrix;
     private float[] matrix = new float[16];
 
 
@@ -80,11 +102,14 @@ public final class CameraRender extends BaseRender {
 
         String vertexSource = Utils.getGLResource(mContext, R.raw.vertex_shader_matrix);
         String fragmentSource = Utils.getGLResource(mContext, R.raw.fragment_shader_camera);
-        mProgram = Utils.createProgram(vertexSource, fragmentSource);
-        // 获取坐标
-        vPosition = GLES20.glGetAttribLocation(mProgram, "v_Position");
-        fPosition = GLES20.glGetAttribLocation(mProgram, "f_Position");
-        uMatrix = GLES20.glGetUniformLocation(mProgram, "u_Matrix");
+//        mProgram = Utils.createProgram(vertexSource, fragmentSource);
+//        // 获取坐标
+//        vPosition = GLES20.glGetAttribLocation(mProgram, "v_Position");
+//        fPosition = GLES20.glGetAttribLocation(mProgram, "f_Position");
+//        uMatrix = GLES20.glGetUniformLocation(mProgram, "u_Matrix");
+
+        ShaderManager.init(mContext);
+        refreshShader();
 
         // 创建 vbos
         int[] vBos = new int[1];
@@ -151,11 +176,10 @@ public final class CameraRender extends BaseRender {
          * false：不做归一化
          * 8：步长是 8
          */
-        GLES20.glEnableVertexAttribArray(vPosition);
-        GLES20.glVertexAttribPointer(vPosition, 2, GLES20.GL_FLOAT, false, 8,
-                0);
-        GLES20.glEnableVertexAttribArray(fPosition);
-        GLES20.glVertexAttribPointer(fPosition, 2, GLES20.GL_FLOAT, false, 8,
+        GLES20.glEnableVertexAttribArray(vPositionHandle);
+        GLES20.glVertexAttribPointer(vPositionHandle, 2, GLES20.GL_FLOAT, false, 8, 0);
+        GLES20.glEnableVertexAttribArray(mTexCoordHandle);
+        GLES20.glVertexAttribPointer(mTexCoordHandle, 2, GLES20.GL_FLOAT, false, 8,
                 mVertexCoordinate.length * 4);
 
 
@@ -202,4 +226,36 @@ public final class CameraRender extends BaseRender {
     public int getTextureId() {
         return mFboRender.getTextureId();
     }
+
+
+
+    private int mFilter = ShaderManager.CAMERA_BASE_SHADER;
+
+
+    /**
+     * 设置滤镜给fboRender，也可以在当前render，当前render需要使用相机纹理 oes
+     * @param filter
+     */
+    public void setFilter(int filter) {
+        mFilter = filter;
+        refreshShader();
+    }
+
+
+    /**
+     * 更新着色器
+     */
+    private void refreshShader() {
+        //获取程序，封装了加载、链接等操作
+        ShaderManager.Param param = ShaderManager.getParam(mFilter);
+        mProgram = param.program;
+        vPositionHandle = param.positionHandle;
+        // 获取变换矩阵的句柄
+        uMatrix = param.mMVPMatrixHandle;
+        //纹理位置句柄
+        mTexCoordHandle = param.mTexCoordHandle;
+
+        Log.d(TAG, "refreshShader end : mProgram = " + mProgram);
+    }
+
 }

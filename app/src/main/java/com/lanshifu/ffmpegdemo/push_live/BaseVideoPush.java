@@ -426,9 +426,9 @@ public abstract class BaseVideoPush {
         private WeakReference<BaseVideoPush> mVideoRecorderWr;
         private volatile boolean mShouldExit = false;
         private EglHelper mEglHelper;
-        private boolean mHashCreateContext = false;
-        private boolean mHashSurfaceCreated = false;
-        private boolean mHashSurfaceChanged = false;
+        private boolean mHasCreateContext = false;
+        private boolean mHasSurfaceCreated = false;
+        private boolean mHasSurfaceChanged = false;
         private int mWidth;
         private int mHeight;
 
@@ -452,21 +452,21 @@ public abstract class BaseVideoPush {
                     }
 
                     // 1. 创建 EGL 上下文
-                    if (!mHashCreateContext) {
+                    if (!mHasCreateContext) {
                         mEglHelper.initCreateEgl(videoRecorder.mSurface, videoRecorder.mEglContext);
-                        mHashCreateContext = true;
+                        mHasCreateContext = true;
                     }
 
                     // 回调 Render
                     GL10 gl = (GL10) mEglHelper.getEglContext().getGL();
-                    if (!mHashSurfaceCreated) {
+                    if (!mHasSurfaceCreated) {
                         videoRecorder.mRenderer.onSurfaceCreated(gl, mEglHelper.getEGLConfig());
-                        mHashSurfaceCreated = true;
+                        mHasSurfaceCreated = true;
                     }
 
-                    if (!mHashSurfaceChanged) {
+                    if (!mHasSurfaceChanged) {
                         videoRecorder.mRenderer.onSurfaceChanged(gl, mWidth, mHeight);
-                        mHashSurfaceChanged = true;
+                        mHasSurfaceChanged = true;
                     }
 
                     videoRecorder.mRenderer.onDrawFrame(gl);

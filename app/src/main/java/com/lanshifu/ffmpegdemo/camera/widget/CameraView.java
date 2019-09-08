@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import com.lanshifu.ffmpegdemo.camera.CameraHelper;
 import com.lanshifu.ffmpegdemo.camera.CameraRender;
 import com.lanshifu.ffmpegdemo.opengl.BaseGLSurfaceView;
+import com.lanshifu.ffmpegdemo.utils.ShaderManager;
 
 
 public class CameraView extends BaseGLSurfaceView implements CameraRender.RenderListener {
@@ -121,5 +122,11 @@ public class CameraView extends BaseGLSurfaceView implements CameraRender.Render
         void beginFocus(int x, int y);
 
         void endFocus(boolean success);
+    }
+
+
+
+    public void setFilter(int filter){
+        mCameraRender.setFilter(filter);
     }
 }
